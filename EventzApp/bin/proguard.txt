@@ -1,0 +1,25 @@
+# view res/layout/main.xml #generated:6
+-keep class com.eventzapp.ConnectFragment { <init>(...); }
+
+# view res/layout/main.xml #generated:10
+-keep class com.eventzapp.EventlistFragment { <init>(...); }
+
+# view AndroidManifest.xml #generated:22
+-keep class com.eventzapp.GCMIntentService { <init>(...); }
+
+# view AndroidManifest.xml #generated:15
+-keep class com.eventzapp.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:34
+-keep class com.eventzapp.RegisterActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:36
+-keep class com.facebook.LoginActivity { <init>(...); }
+
+# view res/layout/com_facebook_usersettingsfragment.xml #generated:48
+# view res/layout/connect.xml #generated:45
+-keep class com.facebook.widget.LoginButton { <init>(...); }
+
+# view AndroidManifest.xml #generated:23
+-keep class com.google.android.gcm.GCMBroadcastReceiver { <init>(...); }
+
