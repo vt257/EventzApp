@@ -227,8 +227,8 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f040018;
         public static final int connectFragment=0x7f04001d;
         public static final int eventlistFragment=0x7f04001e;
+        public static final int fbAuthButton=0x7f04001c;
         public static final int large=0x7f040002;
-        public static final int login_button=0x7f04001c;
         public static final int logo=0x7f04001a;
         public static final int msgView=0x7f040003;
         public static final int normal=0x7f040001;
@@ -237,6 +237,7 @@ containing a value of this type.
         public static final int regButton=0x7f040004;
         public static final int search_box=0x7f040015;
         public static final int small=0x7f040000;
+        public static final int userSettingsFragment=0x7f04001f;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -289,6 +290,7 @@ containing a value of this type.
         public static final int get_started=0x7f05001d;
         public static final int hello_world=0x7f05001a;
         public static final int menu_settings=0x7f05001b;
+        public static final int settings=0x7f05001e;
     }
     public static final class style {
         /** 

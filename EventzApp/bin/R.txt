@@ -86,8 +86,8 @@ int id com_facebook_usersettingsfragment_logo_image 0x7f040017
 int id com_facebook_usersettingsfragment_profile_name 0x7f040018
 int id connectFragment 0x7f04001d
 int id eventlistFragment 0x7f04001e
+int id fbAuthButton 0x7f04001c
 int id large 0x7f040002
-int id login_button 0x7f04001c
 int id logo 0x7f04001a
 int id msgView 0x7f040003
 int id normal 0x7f040001
@@ -96,6 +96,7 @@ int id profile_name 0x7f04001b
 int id regButton 0x7f040004
 int id search_box 0x7f040015
 int id small 0x7f040000
+int id userSettingsFragment 0x7f04001f
 int layout activity_main 0x7f030000
 int layout activity_register 0x7f030001
 int layout com_facebook_friendpickerfragment 0x7f030002
@@ -144,6 +145,7 @@ int string com_facebook_usersettingsfragment_not_logged_in 0x7f05000a
 int string get_started 0x7f05001d
 int string hello_world 0x7f05001a
 int string menu_settings 0x7f05001b
+int string settings 0x7f05001e
 int style AppBaseTheme 0x7f080002
 int style AppTheme 0x7f080003
 int style com_facebook_loginview_default_style 0x7f080000

@@ -37,7 +37,7 @@ public class EventlistFragment extends Fragment {
 	// TODO need to get more fields, e.g. location
 	// TODO will need to ask for the extra permissions right after
 	// login required for getting all the data
-	private static final String MEREQUESTFIELDS = "id";
+	private static final String MEREQUESTFIELDS = "id,location";
 	private static final String FIELDS_KEY = "fields";
 
 	@Override
@@ -56,6 +56,7 @@ public class EventlistFragment extends Fragment {
 
 		Session session = Session.getActiveSession();
 		if (session != null && session.isOpened()) {
+			// TODO ask for the extra permissions, get the access token
 			// Get the user's data
 			getUserData(session);
 		}
@@ -78,7 +79,11 @@ public class EventlistFragment extends Fragment {
 					Log.i("GraphUser", "user request completed");
 					try {
 						String uid = (String) response.getGraphObject().getInnerJSONObject().get("id");
-						new InsertUserEndpointsTask().execute(uid);
+						String location = null;
+						if (response.getGraphObject().getInnerJSONObject().getJSONObject("location").has("name")) {
+							location = response.getGraphObject().getInnerJSONObject().getJSONObject("location").getString("name");
+						}
+						new InsertUserEndpointsTask().execute(uid, location);
 					} catch (Exception e) {
 						// TODO handle the exception
 					}
@@ -141,7 +146,7 @@ public class EventlistFragment extends Fragment {
 	}
 
 	/**
-	 * The async task to insert the user into google datastore
+	 * The async task to ert the user into google datastore
 	 */
 	public class InsertUserEndpointsTask extends AsyncTask<String, Integer, Long> {
 		protected Long doInBackground(String... params) {
@@ -156,7 +161,11 @@ public class EventlistFragment extends Fragment {
 					endpointBuilder).build();
 			try {
 				//TODO now only inserts the id, should include all the fields
-				User user = new User().setUid(Long.parseLong(params[0]));
+				User user = new User().setUid(Long.parseLong(params[0]))
+									  .setLocation(params[1])
+									  .setEventfatchparamsId(Long.parseLong("0"))
+									  .setOrderpreference(0)
+									  .setTotalmatchmethodId(Long.parseLong("0"));
 				User result = endpoint.insertUser(user).execute();
 			} catch (IOException e) {
 				e.printStackTrace();
