@@ -1,6 +1,7 @@
 package com.eventzapp;
 
 import java.io.IOException;
+import java.util.Date;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 
 public class EventlistFragment extends Fragment {
 	private UiLifecycleHelper uiHelper;
@@ -32,13 +34,11 @@ public class EventlistFragment extends Fragment {
 	// sent the offline_permissions access token and the user_id
 	// to the backend
 	// TODO need to get fiendids and likeids with this same request
-	// batchFB also on the frontend?
-	private static final String MEREQUESTPATH = "/me";
-	// TODO need to get more fields, e.g. location
-	// TODO will need to ask for the extra permissions right after
-	// login required for getting all the data
-	private static final String MEREQUESTFIELDS = "id,location";
+	// batchFB also on the frontend/backend?
+	private static final String USERDATAREQUESTPATH = "/me";
+	private static final String USERDATAREQUESTFIELDS = "id,location";
 	private static final String FIELDS_KEY = "fields";
+	private String accessToken = "";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +56,6 @@ public class EventlistFragment extends Fragment {
 
 		Session session = Session.getActiveSession();
 		if (session != null && session.isOpened()) {
-			// TODO ask for the extra permissions, get the access token
-			// Get the user's data
 			getUserData(session);
 		}
 		return view;
@@ -70,15 +68,18 @@ public class EventlistFragment extends Fragment {
 	private void getUserData(final Session session) {
 		// Make an API call to get user data and define a 
 		// new callback to handle the response.
-		Request request = Request.newGraphPathRequest(session, MEREQUESTPATH,
+		Request request = Request.newGraphPathRequest(session, USERDATAREQUESTPATH,
 				new Request.Callback() {
 			@Override
 			public void onCompleted(Response response) {
 				// If the response is successful
 				if (session == Session.getActiveSession()) {
+					accessToken = (String) session.getAccessToken();
 					Log.i("GraphUser", "user request completed");
 					try {
 						String uid = (String) response.getGraphObject().getInnerJSONObject().get("id");
+						// TODO handle the location better, it should probably be something like a 
+						// HashMap with key->value pairs, or some sort of a List
 						String location = null;
 						if (response.getGraphObject().getInnerJSONObject().getJSONObject("location").has("name")) {
 							location = response.getGraphObject().getInnerJSONObject().getJSONObject("location").getString("name");
@@ -89,13 +90,14 @@ public class EventlistFragment extends Fragment {
 					}
 				}
 				if (response.getError() != null) {
-					// Handle errors, will do so later.
+					// TODO Handle errors, will do so later.
 				}
 			}
 		});
-		Bundle merequestparams = new Bundle();
-		merequestparams.putString(FIELDS_KEY, MEREQUESTFIELDS);
-		request.setParameters(merequestparams);
+		
+		Bundle userdatarequestparams = new Bundle();
+		userdatarequestparams.putString(FIELDS_KEY, USERDATAREQUESTFIELDS);
+		request.setParameters(userdatarequestparams);
 		request.executeAsync();
 	} 
 
@@ -146,7 +148,7 @@ public class EventlistFragment extends Fragment {
 	}
 
 	/**
-	 * The async task to ert the user into google datastore
+	 * The async task to insert the user into google datastore
 	 */
 	public class InsertUserEndpointsTask extends AsyncTask<String, Integer, Long> {
 		protected Long doInBackground(String... params) {
@@ -160,12 +162,14 @@ public class EventlistFragment extends Fragment {
 			Userendpoint endpoint = CloudEndpointUtils.updateBuilder(
 					endpointBuilder).build();
 			try {
-				//TODO now only inserts the id, should include all the fields
+				// TODO now only inserts the id, should include all the fields
 				User user = new User().setUid(Long.parseLong(params[0]))
 									  .setLocation(params[1])
 									  .setEventfatchparamsId(Long.parseLong("0"))
 									  .setOrderpreference(0)
-									  .setTotalmatchmethodId(Long.parseLong("0"));
+									  .setTotalmatchmethodId(Long.parseLong("0"))
+									  .setModified(new DateTime(new Date()))
+									  .setAccestoken(accessToken);
 				User result = endpoint.insertUser(user).execute();
 			} catch (IOException e) {
 				e.printStackTrace();

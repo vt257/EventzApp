@@ -1,11 +1,11 @@
 {
   "files": [
     {
-      "path": "myapp-userendpoint-v1-20130501233334-java-1.14.2-beta-sources.jar", 
+      "path": "myapp-userendpoint-v1-20130503004021-java-1.14.2-beta-sources.jar", 
       "type": "source"
     }, 
     {
-      "path": "myapp-userendpoint-v1-20130501233334-java-1.14.2-beta.jar.properties", 
+      "path": "myapp-userendpoint-v1-20130503004021-java-1.14.2-beta.jar.properties", 
       "type": "android.properties"
     }
   ], 
@@ -689,7 +689,7 @@
     }
   ], 
   "language_version": "1.14.2-beta", 
-  "revision": 20130501233334, 
+  "revision": 20130503004021, 
   "id": "userendpoint:v1", 
   "modulePath": "com/eventzapp"
 }

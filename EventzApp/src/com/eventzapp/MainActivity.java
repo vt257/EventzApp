@@ -16,24 +16,39 @@ import com.facebook.UiLifecycleHelper;
 /**
  * The Main Activity.
  * 
- * This activity starts up the RegisterActivity immediately, which communicates
- * with your App Engine backend using Cloud Endpoints. It also receives push
- * notifications from backend via Google Cloud Messaging (GCM).
- * 
- * Check out RegisterActivity.java for more details.
+ * Incorporates 3 fragments:
+ * The ConnectFragment which is displayed when the user is not logged in
+ * The EventlistFragment which is the main fragment responsible for showing the list of events
+ * The SettingsFragment which is a standard facabook fragment, currently responsible for logout
  */
 public class MainActivity extends FragmentActivity {
+	// setting the constant fragment indexes and count
 	private static final int CONNECT = 0;
 	private static final int EVENTLIST = 1;
 	private static final int SETTINGS = 2;
 	private static final int FRAGMENT_COUNT = SETTINGS +1;
+	
+	// the variable to keep track if the activity is resumed or not
 	private boolean isResumed = false;
 
+	// the settings menu item which currently points to the facebook logout screen
 	private MenuItem settings;
 	
+	// the array which will store all the fragments handled by this activity
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 
+	// the lifecycle helper
 	private UiLifecycleHelper uiHelper;
+
+	// setting the session change status callback
+	private Session.StatusCallback callback = 
+			new Session.StatusCallback() {
+		@Override
+		public void call(Session session, 
+				SessionState state, Exception exception) {
+			onSessionStateChange(session, state, exception);
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,57 +68,11 @@ public class MainActivity extends FragmentActivity {
 		}
 		transaction.commit();
 	}
-
-	//	@Override
-	//	protected void onCreate(Bundle savedInstanceState) {
-	//		super.onCreate(savedInstanceState);
-	//		setContentView(R.layout.activity_main);
-	//
-	//		// Start up RegisterActivity right away
-	//		Intent intent = new Intent(this, RegisterActivity.class);
-	//		startActivity(intent);
-	//		// Since this is just a wrapper to start the main activity,
-	//		// finish it after launching RegisterActivity
-	//		finish();
-	//	}
-
-	@Override
-	public void onResume() {
-	    super.onResume();
-	    uiHelper.onResume();
-	    isResumed = true;
-	}
-
-	@Override
-	public void onPause() {
-	    super.onPause();
-	    uiHelper.onPause();
-	    isResumed = false;
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    uiHelper.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
-	public void onDestroy() {
-	    super.onDestroy();
-	    uiHelper.onDestroy();
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-	    super.onSaveInstanceState(outState);
-	    uiHelper.onSaveInstanceState(outState);
-	}
 	
 	@Override
 	protected void onResumeFragments() {
 		super.onResumeFragments();
 		Session session = Session.getActiveSession();
-
 		if (session != null && session.isOpened()) {
 			// if the session is already open,
 			// try to show the selection fragment
@@ -115,16 +84,13 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	private Session.StatusCallback callback = 
-			new Session.StatusCallback() {
-		@Override
-		public void call(Session session, 
-				SessionState state, Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-
-
+	/**
+	 * determines what to do when the facebook session state is changed
+	 * e.g when somebody logs in or logs out
+	 * @param session the current facebook session
+	 * @param state the state of the current facebook session
+	 * @param exception the exception, if thrown
+	 */
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		// Only make changes if the activity is visible
 		if (isResumed) {
@@ -171,6 +137,43 @@ public class MainActivity extends FragmentActivity {
 	    return false;
 	}
 	
+	@Override
+	public void onResume() {
+	    super.onResume();
+	    uiHelper.onResume();
+	    isResumed = true;
+	}
+
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    uiHelper.onPause();
+	    isResumed = false;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    uiHelper.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onDestroy() {
+	    super.onDestroy();
+	    uiHelper.onDestroy();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	    uiHelper.onSaveInstanceState(outState);
+	}
+	
+	/**
+	 * function that shows the specified fragment and hides the rest
+	 * @param fragmentIndex the index of the fragment to show
+	 * @param addToBackStack if the fragment should be added to the backstack
+	 */
 	private void showFragment(int fragmentIndex, boolean addToBackStack) {
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction transaction = fm.beginTransaction();
