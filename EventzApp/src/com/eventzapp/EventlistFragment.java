@@ -190,8 +190,8 @@ public class EventlistFragment extends Fragment {
 				// TODO now only inserts the id, should include all the fields
 				User user = new User().setUid(Long.parseLong(params[0]))
 									  .setLocation(params[1])
-									  .setLocationLatitude(params[2])
-									  .setLocationLongitude(params[3])
+									  .setLocationlatitude(params[2])
+									  .setLocationlongitude(params[3])
 									  .setEventfatchparamsId(Long.parseLong("0"))
 									  .setOrderpreference(0)
 									  .setTotalmatchmethodId(Long.parseLong("0"))
