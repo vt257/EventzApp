@@ -3,7 +3,12 @@ package com.eventzapp;
 import java.io.IOException;
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -77,14 +82,34 @@ public class EventlistFragment extends Fragment {
 					accessToken = (String) session.getAccessToken();
 					Log.i("GraphUser", "user request completed");
 					try {
-						String uid = (String) response.getGraphObject().getInnerJSONObject().get("id");
+						String uid = response.getGraphObject().getInnerJSONObject().getString("id");
 						// TODO handle the location better, it should probably be something like a 
 						// HashMap with key->value pairs, or some sort of a List
-						String location = null;
-						if (response.getGraphObject().getInnerJSONObject().getJSONObject("location").has("name")) {
-							location = response.getGraphObject().getInnerJSONObject().getJSONObject("location").getString("name");
+						JSONObject locationJSON = response.getGraphObject().getInnerJSONObject().getJSONObject("location");
+						String locationId = null;
+						String locationName = null;
+						String locationLongitude = null;
+						String locationLatitude = null;
+						if (locationJSON.has("id")) {
+							locationId = locationJSON.getString("id");
+							//TODO: Get the latitude and longitude from Facebook 
 						}
-						new InsertUserEndpointsTask().execute(uid, location);
+						if (locationJSON.has("name")) {
+							locationName = locationJSON.getString("name");
+							if (locationJSON.has("longtitude") && locationJSON.has("latitute")) {
+								locationLongitude = locationJSON.getString("longtitude");
+								locationLatitude = locationJSON.getString("latitude");
+							} else {
+								int maxResults = 1; //TODO: It is assumed that only one address is returned for the location
+								Geocoder gc = new Geocoder(getActivity());
+								Address address = gc.getFromLocationName(locationName, maxResults).get(0);
+								locationLongitude = Double.toString(address.getLongitude());
+								locationLatitude = Double.toString(address.getLatitude());
+							}
+							Log.w("longtitue: ", locationLongitude);
+							Log.w("latitude: ", locationLatitude);
+						}
+						new InsertUserEndpointsTask().execute(uid, locationName, locationLatitude, locationLongitude);
 					} catch (Exception e) {
 						// TODO handle the exception
 					}
@@ -165,6 +190,8 @@ public class EventlistFragment extends Fragment {
 				// TODO now only inserts the id, should include all the fields
 				User user = new User().setUid(Long.parseLong(params[0]))
 									  .setLocation(params[1])
+									  .setLocationLatitude(params[2])
+									  .setLocationLongitude(params[3])
 									  .setEventfatchparamsId(Long.parseLong("0"))
 									  .setOrderpreference(0)
 									  .setTotalmatchmethodId(Long.parseLong("0"))
