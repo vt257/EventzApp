@@ -96,8 +96,8 @@ public class EventlistFragment extends Fragment {
 						}
 						if (locationJSON.has("name")) {
 							locationName = locationJSON.getString("name");
-							if (locationJSON.has("longtitude") && locationJSON.has("latitute")) {
-								locationLongitude = locationJSON.getString("longtitude");
+							if (locationJSON.has("longitude") && locationJSON.has("latitute")) {
+								locationLongitude = locationJSON.getString("longitude");
 								locationLatitude = locationJSON.getString("latitude");
 							} else {
 								int maxResults = 1; //TODO: It is assumed that only one address is returned for the location
@@ -120,9 +120,9 @@ public class EventlistFragment extends Fragment {
 			}
 		});
 		
-		Bundle userdatarequestparams = new Bundle();
-		userdatarequestparams.putString(FIELDS_KEY, USERDATAREQUESTFIELDS);
-		request.setParameters(userdatarequestparams);
+		Bundle userDataRequestParams = new Bundle();
+		userDataRequestParams.putString(FIELDS_KEY, USERDATAREQUESTFIELDS);
+		request.setParameters(userDataRequestParams);
 		request.executeAsync();
 	} 
 
@@ -190,13 +190,13 @@ public class EventlistFragment extends Fragment {
 				// TODO now only inserts the id, should include all the fields
 				User user = new User().setUid(Long.parseLong(params[0]))
 									  .setLocation(params[1])
-									  .setLocationlatitude(params[2])
-									  .setLocationlongitude(params[3])
-									  .setEventfatchparamsId(Long.parseLong("0"))
-									  .setOrderpreference(0)
-									  .setTotalmatchmethodId(Long.parseLong("0"))
+									  .setLocationLatitude(params[2])
+									  .setLocationLongitude(params[3])
+									  .setEventFatchParamsId(Long.parseLong("0"))
+									  .setOrderPreference(0)
+									  .setTotalMatchMethodId(Long.parseLong("0"))
 									  .setModified(new DateTime(new Date()))
-									  .setAccestoken(accessToken);
+									  .setAccesToken(accessToken);
 				User result = endpoint.insertUser(user).execute();
 			} catch (IOException e) {
 				e.printStackTrace();
